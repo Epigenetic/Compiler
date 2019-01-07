@@ -1,4 +1,22 @@
-The program works in much the same way as the translator, the primary differences come in function calls and in variable name translation.
+To run the program- compile compiler.hs with GHC or your Haskell compiler of choice and then run the program in the command line with the file to be translated as a command line parameter. The input must be in the subset of C accepted by the compiler (namely no heap operations like pointers, or structs). The output will be another C file in a written in a von Neumann like subset which can be compiled and run for the same effect as teh original program.
+
+The program works in much the same way as the translator:
+First the translator module is given the file name.
+This is passed to the Scanner module, which opens the file and reads it.
+Using pattern matching and recursive iteration, the Scanner module runs through the the entire file and produces a list of Tokens.
+This is all assuming that there are no malformed tokens, however, if there are malformed tokens, an error is raised.
+The translator then takes this list and copies all the comments to stdout.
+It then calls the program method to begin the parse.
+The parse/translation methods all take a "Token Iterator" (A tuple containing the contents of the next token, the list of the the remaining tokens, and an integer indicating the progress through the list).
+The methods also take a table, which is a symbol table with all the mappings.
+The methods in return give back a tuple of a TokenIterator, a string containing all the translated program to this point, and the name table.
+The program proceeds using the same productions used in the parser provided for A4.
+At the end of the call, the code generated is printed to the console.
+In order to predict which production to use, there is a separate ParseTable module which contains the first and follow sets for each of the productions.
+These sets are combined using the predict function.
+The inclusion of the next token in this predict set is used to decied which production to use.
+
+the primary differences come in function calls and in variable name translation.
 Instead of providing global[x], the compiler provides mem[x] and sets base/top to start after them.
 Instead of providing local[x], the compiler provides mem[base + x].
 Instead of providing param, the compiler provides mem[base - (numParams - param.Index + 4)].
